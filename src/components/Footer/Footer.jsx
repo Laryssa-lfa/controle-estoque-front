@@ -1,7 +1,13 @@
-import './Footer.css';
+import { Container, Navbar } from 'react-bootstrap';
 
-export default function Footer () {
+export default function Footer() {
   return (
-    <div>Footer</div>
+    <footer>
+      <Navbar bg="dark" data-bs-theme="dark">
+        <Container>
+          <Navbar.Brand>Todos os direitos reservados.</Navbar.Brand>
+        </Container>
+      </Navbar>
+    </footer>
   )
 }
