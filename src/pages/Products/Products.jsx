@@ -28,18 +28,14 @@ function tableProducts(listProducts) {
         </tr>
       </thead>
       <tbody>
-        {
-          listProducts.map(prod => {
-            return (
-              <tr key={prod.id}>
-                <td>{prod.id}</td>
-                <td>{prod.nome}</td>
-                <td>{prod.quantidade}</td>
-                <td>{prod.preco}</td>
-              </tr>
-            );
-          })
-        }
+        {listProducts.map(prod => (
+          <tr key={prod.id}>
+            <td>{prod.id}</td>
+            <td>{prod.nome}</td>
+            <td>{prod.quantidade}</td>
+            <td>R$ {prod.preco}</td>
+          </tr>
+        ))}
       </tbody>
     </Table>
   );
@@ -53,7 +49,11 @@ export default function Products() {
       <Header />
       <Container className="py-5">
         <h1>Lista de Produtos</h1>
-        {listProducts ? tableProducts(listProducts) : <h4 className="pt-3">Nenhum produto disponível no momento.</h4> }
+        {
+          listProducts.length > 0
+            ? tableProducts(listProducts)
+            : <h4 className="pt-3">Nenhum produto disponível no momento.</h4>
+        }
       </Container>
       <Footer />
     </>
