@@ -5,6 +5,10 @@ Aplicação inicial do **Frontend em ReactJs** para integração com *API contro
 ## Tecnologias Utilizadas
  * ReactJs v19.1.0
  * Bootstrap v5.3.7
+ * Axios v1.11.0
+ * React-router-dom v6.30.1
+ * React-bootstrap v2.10.10
+ * React-hook-form v7.61.1
 
 
 **OBS.: Projeto em desenvolvimento**

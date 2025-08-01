@@ -1,20 +1,9 @@
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import { Container, Table } from "react-bootstrap";
-import { useState } from "react";
-
-const products = [
-  { id: 1, nome: "Notebook Dell", quantidade: 5, preco: 4500.00 },
-  { id: 2, nome: "Mouse Logitech", quantidade: 20, preco: 150.00 },
-  { id: 3, nome: "Teclado Mecânico", quantidade: 10, preco: 350.00 },
-  { id: 4, nome: "Monitor Samsung", quantidade: 7, preco: 1200.00 },
-  { id: 5, nome: "Impressora HP", quantidade: 4, preco: 980.00 },
-  { id: 6, nome: "HD Externo 1TB", quantidade: 15, preco: 390.00 },
-  { id: 7, nome: "Webcam Full HD", quantidade: 8, preco: 250.00 },
-  { id: 8, nome: "Cadeira Gamer", quantidade: 3, preco: 1300.00 },
-  { id: 9, nome: "Smartphone Xiaomi", quantidade: 12, preco: 1800.00 },
-  { id: 10, nome: "Caixa de Som Bluetooth", quantidade: 9, preco: 220.00 }
-];
+import axios from 'axios';
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
 
 function tableProducts(listProducts) {
   return (
@@ -41,12 +30,92 @@ function tableProducts(listProducts) {
   );
 }
 
+const nomeValid = {
+  required: {
+    value: true,
+    message: "Preencha o nome do produto."
+  },
+  maxLength: {
+    value: 20,
+    message: "O nome do produto deve ter no máximo 20 caracteres."
+  }
+}
+
+const quantValid = {
+  required: {
+    value: true,
+    message: "Preencha a quantidade de produtos."
+  },
+  min: {
+    value: 1,
+    message: "Quantidade minima de 1."
+  }
+}
+
+const precoValid = {
+  required: {
+    value: true,
+    message: "Preencha o preço do produtos."
+  },
+  min: {
+    value: 0.0001,
+    message: "O preço do produto não pode ser menor ou igual a 0."
+  }
+}
+
 export default function Products() {
-  const [listProducts, setListProducts] = useState(products);
+  const [listProducts, setListProducts] = useState([]);
+  const { register, handleSubmit, formState: { errors } } = useForm();
+
+  function onSubmit(dados) {
+    // setListProducts([...products, dados]);
+  }
+
+  async function buscarProdutos() {
+    const url = "https://controle-estoque-fp8d.onrender.com/produtos";
+    const response = await axios.get(url);
+    setListProducts(response.data);
+  }
+
+  useEffect(async () => { buscarProdutos() }, []);
 
   return (
     <>
       <Header />
+      <Container className="py-5">
+        <h1>Produtos</h1>
+
+        <Form noValidate onSubmit={handleSubmit(onSubmit)}>
+          <Row className="mb-3">
+            <Form.Group as={Col} md="12" controlId="nome">
+              <Form.Label>Nome do Produto</Form.Label>
+              <Form.Control type="text" isInvalid={!!errors.nome} {...register("nome", nomeValid)} />
+              <Form.Control.Feedback type="invalid">
+                {errors.nome?.message}
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group as={Col} md="6" controlId="quantidade">
+              <Form.Label>Quantidade</Form.Label>
+              <Form.Control type="number" isInvalid={!!errors.quantidade} {...register("quantidade", quantValid)} />
+              <Form.Control.Feedback type="invalid">
+                {errors.quantidade?.message}
+              </Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group as={Col} md="6" controlId="preco">
+              <Form.Label>Preço</Form.Label>
+              <Form.Control type="number" isInvalid={!!errors.preco} {...register("preco", precoValid)} />
+              <Form.Control.Feedback type="invalid">
+                {errors.preco?.message}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Row>
+
+          <Button type="submit">Cadastrar</Button>
+        </Form>
+      </Container>
+
       <Container className="py-5">
         <h1>Lista de Produtos</h1>
         {
