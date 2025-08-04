@@ -1,6 +1,6 @@
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import axios from 'axios';
+import api from "../../api/api";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
@@ -65,16 +65,30 @@ const precoValid = {
 
 export default function Products() {
   const [listProducts, setListProducts] = useState([]);
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const [saving, setSaving] = useState(false);
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
-  function onSubmit(dados) {
-    // setListProducts([...products, dados]);
+  async function onSubmit(dados) {
+    setSaving(true);
+    try {
+      await api.post("/produtos", dados);
+      reset();
+      buscarProdutos();
+    } catch (error) {
+      window.alert("Houve um erro.");
+      console.error(error);
+    }
+    setSaving(false);
   }
 
   async function buscarProdutos() {
-    const url = "https://controle-estoque-fp8d.onrender.com/produtos";
-    const response = await axios.get(url);
-    setListProducts(response.data);
+    try {
+      const response = await api.get("/produtos");
+      setListProducts(response.data);
+    } catch (error) {
+      window.alert("Houve um erro.");
+      console.error(error);
+    }
   }
 
   useEffect(async () => { buscarProdutos() }, []);
@@ -112,7 +126,9 @@ export default function Products() {
             </Form.Group>
           </Row>
 
-          <Button type="submit">Cadastrar</Button>
+          <Button type="submit" disabled={saving}>
+            {saving ? "Cadastrando..." : "Cadastrar"}
+          </Button>
         </Form>
       </Container>
 
