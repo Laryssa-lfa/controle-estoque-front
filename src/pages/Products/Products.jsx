@@ -1,8 +1,10 @@
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import api from "../../api/api";
-import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
 
 function tableProducts(listProducts) {
@@ -66,7 +68,10 @@ const precoValid = {
 export default function Products() {
   const [listProducts, setListProducts] = useState([]);
   const [saving, setSaving] = useState(false);
+
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   async function onSubmit(dados) {
     setSaving(true);
@@ -92,6 +97,10 @@ export default function Products() {
   }
 
   useEffect(async () => { buscarProdutos() }, []);
+
+  if (!isAuthenticated) {
+    return navigate("/login");
+  }
 
   return (
     <>
