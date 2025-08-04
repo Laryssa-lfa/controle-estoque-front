@@ -4,10 +4,10 @@ import { Button, Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-let intervalId = 0;
+let intervalId = null;
 
 export default function Home() {
-  const [time, setTime] = useState("00:00:00");
+  const [time, setTime] = useState(new Date().toLocaleTimeString());
 
   useEffect(() => {
     startTime();
@@ -18,6 +18,8 @@ export default function Home() {
   }, []);
 
   function startTime() {
+    if (intervalId) return;
+
     intervalId = setInterval(() => {
       const timeCurrent = new Date().toLocaleTimeString();
       setTime(timeCurrent);
@@ -26,6 +28,7 @@ export default function Home() {
 
   function stopTime() {
     clearInterval(intervalId);
+    intervalId = null;
   }
 
   return (
