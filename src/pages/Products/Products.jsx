@@ -5,6 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { firebaseUserToken } from "../../firebase/auth";
 import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
 
 function tableProducts(listProducts) {
@@ -65,6 +66,8 @@ const precoValid = {
   }
 }
 
+const token = await firebaseUserToken();
+
 export default function Products() {
   const [listProducts, setListProducts] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -76,7 +79,9 @@ export default function Products() {
   async function onSubmit(dados) {
     setSaving(true);
     try {
-      await api.post("/produtos", dados);
+      await api.post("/produtos", dados, {
+        headers: { Authorization: token }
+      });
       reset();
       buscarProdutos();
     } catch (error) {
@@ -88,7 +93,9 @@ export default function Products() {
 
   async function buscarProdutos() {
     try {
-      const response = await api.get("/produtos");
+      const response = await api.get("/produtos", {
+        headers: { Authorization: token }
+      });
       setListProducts(response.data);
     } catch (error) {
       window.alert("Houve um erro.");
@@ -99,7 +106,7 @@ export default function Products() {
   useEffect(async () => { buscarProdutos() }, []);
 
   if (!isAuthenticated) {
-    return navigate("/login");
+    navigate("/login");
   }
 
   return (
